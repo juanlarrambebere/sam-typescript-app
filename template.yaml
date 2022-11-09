@@ -4,18 +4,29 @@ Description: >
   sam-app-ts
 
   Sample SAM Template for sam-app-ts
-  
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Stage:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - production
+    Description: Enter staging or production. Default staging
 
 Resources:
-   # The api gateway
+  # The api gateway
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: !Ref Stage
       Auth:
         DefaultAuthorizer: MyLambdaTokenAuthorizer
         Authorizers:
@@ -46,10 +57,10 @@ Resources:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: 'es2020'
         EntryPoints:
           - handlers/sample.ts
-  
+
   # The authorizer lambda
   MyAuthFunction:
     Type: AWS::Serverless::Function
@@ -60,6 +71,6 @@ Resources:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: 'es2020'
         EntryPoints:
-          - authorizer.ts   
+          - authorizer.ts
